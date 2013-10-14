@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AvisJS Test</title>
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="avisjs.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+
+    $("#avisjs").attr("width", $(window).width());
+    var avis = new avisJS($("#avisjs"));
+
+    avis.getBufferFromAudioURL("demo.mp3", function(buffer){
+        avis.createContextNodesFromBuffer(buffer);
+        avis.start();
+    });
+
+    // on the fly random settings change on press SPACE
+    $(document).on("keydown", function(ev){
+        if(ev.keyCode == 32){
+            avis.options.frequencySmoothing = avis.rand(1, 70);
+            avis.options.randomizePeaks = avis.rand(1,60);
+            avis.options.drawStyle = randOption(["bubbles", "equalizer"]);
+            avis.drawStyles[avis.options.drawStyle].mirrorBars = avis.rand(0,1);
+            avis.drawStyles[avis.options.drawStyle].barwidth = avis.rand(1,10);
+            avis.drawStyles[avis.options.drawStyle].barspacer = avis.rand(1,10);
+            avis.drawStyles[avis.options.drawStyle].radius = avis.rand(1,50);
+            avis.drawStyles[avis.options.drawStyle].parts = avis.rand(1,20);
+            avis.drawStyles[avis.options.drawStyle].multi = avis.rand(1,20);
+            avis.drawStyles[avis.options.drawStyle].mirrorBarsHeightMulti = avis.rand(0.1, 1);
+            avis.drawStyles[avis.options.drawStyle].barcolor = {r:avis.rand(0,255),g:avis.rand(0,255),b:avis.rand(0,255)};
+            avis.drawStyles[avis.options.drawStyle].color = {r:avis.rand(0,255),g:avis.rand(0,255),b:avis.rand(0,255)};
+        }
+    });
+
+});
+
+function randOption(options){
+    options = shuffle(options);
+    return options.shift();
+}
+
+function shuffle(o){ //v1.0
+    for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+}
+</script>
+</head>
+<body style="padding:10px; margin:0px; overflow: hidden; background: #333333; color: white; font-family: arial;">
+<h3 style="position: absolute;">Loading AvisJS Demo Sound (~1MB) - Press space to change randomly the design of the bar<br/>This example only runs in Google Chrome and only when you access this file through a webserver (file:/// urls doesn't work because of browser restrictions)</h3>
+<canvas id="avisjs" width="500" height="500"></canvas>
+</body>
+</html>
